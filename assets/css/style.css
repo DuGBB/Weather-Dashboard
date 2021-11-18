@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+    color: white;
+    background-color: blue;
+    background-image: linear-gradient(to right, rgb(136, 136, 170), darkblue);
+    margin: 0;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
