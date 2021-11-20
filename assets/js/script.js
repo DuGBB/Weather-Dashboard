@@ -9,7 +9,6 @@ function weatherApi() {
 }
 }
 
-//weatherApi();
 
 async function callWeatherApi(apiChoice) {
 
@@ -27,23 +26,6 @@ async function callWeatherApi(apiChoice) {
         );
     });
 
-/*
-    $(document).ready(function(){
-        $.ajax({
-          
-           url: apiChoice, 
-            type: "GET",
-            success: function(result) {
-                console.log("api success");
-                console.log(result);
-                return result;
-            },
-            error: function(error){
-                console.log("api error");
-                console.log(error);
-            }
-        })
-    });*/
 }
 
 function weatherDisplay() {
@@ -85,12 +67,6 @@ function citySearch() {
 }
 
 async function cityCoords(cityName) {
- /*   var cityLatLong = async() => {
-     console.log("FLIP YOU");
-    var result = await callWeatherApi("https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=f5fcc6200f37ec0e220488ef0220dcf7");
-    console.log(result);
-    }
- */
     var cityLatLong = await callWeatherApi("https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=f5fcc6200f37ec0e220488ef0220dcf7");
     var localDictionary = localStorage.getItem("cityLongLad");
     if (localDictionary === null) {
@@ -98,11 +74,11 @@ async function cityCoords(cityName) {
     } else {
         var callDictionary = JSON.parse(localDictionary);
     }
-    //var longLadCity = JSON.parse(cityLatLong);
     var CoordValue = cityLatLong["coord"];
-    console.log(CoordValue);
-    //console.log(typeof cityLatLong);
-    //console.log(typeof callDictionary);
+    callDictionary[cityName] = CoordValue;
+    localStorage["cityLongLad"] = JSON.stringify(callDictionary);
+    
+
 }
 
 weatherDisplay();
