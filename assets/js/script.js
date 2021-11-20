@@ -63,7 +63,7 @@ function citySearch() {
     console.log(searchCity);
     var coords = localCheck(searchCity);
     if (coords) {
-        var skipOne = callWeatherApi("https://api.openweathermap.org/data/2.5/onecall?lat=42.3584&lon=-71.0598&appid=");
+        var skipOne = callWeatherApi("https://api.openweathermap.org/data/2.5/onecall?lat=42.3584&lon=-71.0598&appid=f5fcc6200f37ec0e220488ef0220dcf7");
     } else {
         var cityLatLong = callWeatherApi("https://api.openweathermap.org/data/2.5/weather?q=Boston&appid=");
     };
