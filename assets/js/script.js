@@ -11,7 +11,23 @@ function weatherApi() {
 
 //weatherApi();
 
-function callWeatherApi(apiChoice) {
+async function callWeatherApi(apiChoice) {
+
+    return new Promise(function (resolve, reject) {
+        axios.get(apiChoice).then(
+            (response) => {
+                var result = response.data;
+                console.log('Processing Request');
+                resolve(result);
+                console.log(result);
+            },
+                (error) => {
+                reject(error);pr
+            }
+        );
+    });
+
+/*
     $(document).ready(function(){
         $.ajax({
           
@@ -27,7 +43,7 @@ function callWeatherApi(apiChoice) {
                 console.log(error);
             }
         })
-    });
+    });*/
 }
 
 function weatherDisplay() {
@@ -47,7 +63,6 @@ function weatherDisplay() {
 
 
 function localCheck(searchCity) {
-    console.log("BooYahh");
     var localDictionary = localStorage.getItem("cityLongLad");
     if (localDictionary === null) {
         var callDictionary = {};
@@ -65,8 +80,29 @@ function citySearch() {
     if (coords) {
         var skipOne = callWeatherApi("https://api.openweathermap.org/data/2.5/onecall?lat=42.3584&lon=-71.0598&appid=f5fcc6200f37ec0e220488ef0220dcf7");
     } else {
-        var cityLatLong = callWeatherApi("https://api.openweathermap.org/data/2.5/weather?q=Boston&appid=");
+        cityCoords(searchCity);
     };
+}
+
+async function cityCoords(cityName) {
+ /*   var cityLatLong = async() => {
+     console.log("FLIP YOU");
+    var result = await callWeatherApi("https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=f5fcc6200f37ec0e220488ef0220dcf7");
+    console.log(result);
+    }
+ */
+    var cityLatLong = await callWeatherApi("https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=f5fcc6200f37ec0e220488ef0220dcf7");
+    var localDictionary = localStorage.getItem("cityLongLad");
+    if (localDictionary === null) {
+        var callDictionary = {};
+    } else {
+        var callDictionary = JSON.parse(localDictionary);
+    }
+    //var longLadCity = JSON.parse(cityLatLong);
+    var CoordValue = cityLatLong["coord"];
+    console.log(CoordValue);
+    //console.log(typeof cityLatLong);
+    //console.log(typeof callDictionary);
 }
 
 weatherDisplay();
