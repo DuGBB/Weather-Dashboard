@@ -55,17 +55,22 @@ function localCheck(searchCity) {
     return callDictionary[searchCity];
 }
 
-function citySearch() {
+async function citySearch() {
     var searchCity = document.getElementById("city").value;
     console.log(searchCity);
     var coords = localCheck(searchCity);
     if (coords) {
         var skipOne = callWeatherApi("https://api.openweathermap.org/data/2.5/onecall?lat=42.3584&lon=-71.0598&appid=f5fcc6200f37ec0e220488ef0220dcf7");
     } else {
-        cityCoords(searchCity);
+        var searchCoords = await cityCoords(searchCity);
     };
+    getWeather(searchCoords);
 }
 
+async function getWeather(coordSearch) {
+    var weatherData = await callWeatherApi("https://api.openweathermap.org/data/2.5/onecall?lat=" + coordSearch["lat"] + "&lon=" + coordSearch["lon"] + "&exclude=minutely,hourly,alerts&appid=f5fcc6200f37ec0e220488ef0220dcf7");
+    console.log(weatherData);
+}
 async function cityCoords(cityName) {
     var cityLatLong = await callWeatherApi("https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=f5fcc6200f37ec0e220488ef0220dcf7");
     var localDictionary = localStorage.getItem("cityLongLad");
@@ -77,7 +82,7 @@ async function cityCoords(cityName) {
     var CoordValue = cityLatLong["coord"];
     callDictionary[cityName] = CoordValue;
     localStorage["cityLongLad"] = JSON.stringify(callDictionary);
-    
+    return CoordValue;
 
 }
 
