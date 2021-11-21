@@ -21,7 +21,7 @@ async function callWeatherApi(apiChoice) {
                 console.log(result);
             },
                 (error) => {
-                reject(error);pr
+                reject(error);
             }
         );
     });
@@ -63,21 +63,50 @@ function history() {
      
         console.log(latLongCoords);
         historyButton.onclick = function(){
-            console.log(key);
-            console.log(value); 
-        };/*
-        historyButton.addEventListener("click", function (latLongCoords) {
-        //getWeather(latLongCoords);
-          console.log("BooYah");
-          console.log(key);
-          console.log(latLongCoords);
-        });*/
+        
+        currentWeather(key);
+        };
+
         historyEl.appendChild(historyButton);
         var breakLine = document.createElement("br");
         historyEl.appendChild(breakLine);
 
     }
         
+}
+
+function currentWeather(cityName) {
+    let localDictionary = localStorage.getItem("cityWeather");
+    if (localDictionary === null) {
+        var callDictionary = {};
+    } else {
+        var callDictionary = JSON.parse(localDictionary);
+    }   
+    let cityWeather = callDictionary[cityName];
+    var currentConditions = cityWeather["current"];
+    var tempCurrent = currentConditions["temp"];
+    temp = ((tempCurrent-273.15)*1.8)+32;
+    var currentEl = document.getElementById("cityDate");
+    var currentDate = currentDay();
+    currentEl.innerHTML = cityName + "  " + currentDate;
+    var currentTemp = document.getElementById("cityTemp");
+    currentTemp.innerHTML = "Temp: " + temp + "\u00B0F"; 
+    var currentWind = document.getElementById("cityWind");
+    var windSpeed = currentConditions["wind_speed"];
+    currentWind.innerHTML = "Wind: " + windSpeed + "MPH";
+    var currentHumidity = document.getElementById("cityHumidity");
+    var humidity = currentConditions["humidity"];
+    currentHumidity.innerHTML = "Humidity: " + humidity + "%";
+    var currentUv = document.getElementById("cityUv");
+    var uvIndex = currentConditions["uvi"];
+    currentUv.innerHTML = "UV Index: " + uvIndex;
+
+}
+
+function currentDay() {//date display
+    var today = moment();
+    var momentDisplay = moment(today).format("(M/D/YYYY)");
+    return momentDisplay;
 }
 
 
@@ -101,7 +130,7 @@ async function citySearch() {
     } else {
         var searchCoords = await cityCoords(searchCity);
     };
-    weatherData = getWeather(searchCoords);
+    weatherData = await getWeather(searchCoords);
     saveWeatherData(searchCity, weatherData);
 }
 
