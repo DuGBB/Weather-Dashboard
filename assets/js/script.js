@@ -29,7 +29,7 @@ async function callWeatherApi(apiChoice) {
 }
 
 function weatherDisplay() {
-    var weatherDisplay = document.getElementById("containerBlock");
+    var weatherDisplay = document.getElementById("searchBox");
     var cityBox = document.createElement("textArea");
     cityBox.setAttribute("id", "city");
     var citySave = document.createElement("button");
@@ -39,9 +39,46 @@ function weatherDisplay() {
         citySearch();
     });
     weatherDisplay.appendChild(cityBox);
+    var breakLine = document.createElement("br");
+    weatherDisplay.appendChild(breakLine);
     weatherDisplay.appendChild(citySave);
+
+    history();
 }
 
+function history() {
+    var historyEl = document.getElementById("historyBox");
+    var localDictionary = localStorage.getItem("cityLongLad");
+    if (localDictionary === null) {
+        var callDictionary = {};
+    } else {
+        var callDictionary = JSON.parse(localDictionary);
+    };
+
+    for (let [key, value] of Object.entries(callDictionary)) {
+        let historyButton = document.createElement("button");
+        historyButton.setAttribute("id", key);
+        var latLongCoords = callDictionary[key];
+        historyButton.innerHTML = key;
+     
+        console.log(latLongCoords);
+        historyButton.onclick = function(){
+            console.log(key);
+            console.log(value); 
+        };/*
+        historyButton.addEventListener("click", function (latLongCoords) {
+        //getWeather(latLongCoords);
+          console.log("BooYah");
+          console.log(key);
+          console.log(latLongCoords);
+        });*/
+        historyEl.appendChild(historyButton);
+        var breakLine = document.createElement("br");
+        historyEl.appendChild(breakLine);
+
+    }
+        
+}
 
 
 function localCheck(searchCity) {
@@ -64,13 +101,30 @@ async function citySearch() {
     } else {
         var searchCoords = await cityCoords(searchCity);
     };
-    getWeather(searchCoords);
+    weatherData = getWeather(searchCoords);
+    saveWeatherData(searchCity, weatherData);
+}
+
+function saveWeatherData(city, data){
+    // get info in local storage so I don't overwrite exisitng info
+    var localDictionary = localStorage.getItem("cityWeather");
+    if (localDictionary === null) {
+        var callDictionary = {};
+    } else {
+        var callDictionary = JSON.parse(localDictionary);
+    }
+
+    callDictionary[city] = data;
+    localStorage["cityWeather"] = JSON.stringify(callDictionary);
 }
 
 async function getWeather(coordSearch) {
     var weatherData = await callWeatherApi("https://api.openweathermap.org/data/2.5/onecall?lat=" + coordSearch["lat"] + "&lon=" + coordSearch["lon"] + "&exclude=minutely,hourly,alerts&appid=f5fcc6200f37ec0e220488ef0220dcf7");
     console.log(weatherData);
+    // return weather JSON to function asking for data
+    return weatherData;
 }
+
 async function cityCoords(cityName) {
     var cityLatLong = await callWeatherApi("https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=f5fcc6200f37ec0e220488ef0220dcf7");
     var localDictionary = localStorage.getItem("cityLongLad");
