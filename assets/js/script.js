@@ -47,7 +47,9 @@ function weatherDisplay() {
 }
 
 function history() {
-    var historyEl = document.getElementById("historyBox");
+    var oldhistoryEl = document.getElementById("historyBox");
+    var historyEl = document.createElement("div");
+    historyEl.setAttribute("id", "historyBox");
     var localDictionary = localStorage.getItem("cityLongLad");
     if (localDictionary === null) {
         var callDictionary = {};
@@ -60,19 +62,16 @@ function history() {
         historyButton.setAttribute("id", key);
         var latLongCoords = callDictionary[key];
         historyButton.innerHTML = key;
-     
-        console.log(latLongCoords);
         historyButton.onclick = function(){
-        
-        currentWeather(key);
+            currentWeather(key);
+            futureWeather(key);
         };
 
         historyEl.appendChild(historyButton);
         var breakLine = document.createElement("br");
         historyEl.appendChild(breakLine);
-
     }
-        
+    oldhistoryEl.parentElement.replaceChild(historyEl, oldhistoryEl);        
 }
 
 function currentWeather(cityName) {
@@ -126,12 +125,16 @@ async function citySearch() {
     console.log(searchCity);
     var coords = localCheck(searchCity);
     if (coords) {
-        var skipOne = callWeatherApi("https://api.openweathermap.org/data/2.5/onecall?lat=42.3584&lon=-71.0598&appid=f5fcc6200f37ec0e220488ef0220dcf7");
+        //var skipOne = callWeatherApi("https://api.openweathermap.org/data/2.5/onecall?lat=42.3584&lon=-71.0598&appid=f5fcc6200f37ec0e220488ef0220dcf7");
+        var searchCoords = coords;
     } else {
         var searchCoords = await cityCoords(searchCity);
     };
     weatherData = await getWeather(searchCoords);
     saveWeatherData(searchCity, weatherData);
+    history();
+    currentWeather(searchCity);
+    futureWeather(searchCity);
 }
 
 function saveWeatherData(city, data){
@@ -168,5 +171,47 @@ async function cityCoords(cityName) {
     return CoordValue;
 
 }
+
+function futureWeather(cityName) {
+    let localDictionary = localStorage.getItem("cityWeather");
+    if (localDictionary === null) {
+        var callDictionary = {};
+    } else {
+        var callDictionary = JSON.parse(localDictionary);
+    }   
+    let cityWeather = callDictionary[cityName];
+    var futureConditions = cityWeather["daily"];
+    var futureConditionsEl = document.getElementById("futureConditions");
+    for (let index = 0; index < 5; index++) {
+        const element = futureConditions[index];
+        var futureEl = document.createElement("p");
+        var futureDate = futureDay(index + 1);
+        futureEl.innerHTML = futureDate;
+        console.log(futureDate);
+        const dailyEl = document.createElement("div");
+        dailyEl.appendChild(futureEl);
+        futureConditionsEl.appendChild(dailyEl);
+    }
+
+    /*var tempFuture = futureConditions["temp"];
+    temp = ((tempFuture-273.15)*1.8)+32;
+ 
+    var futureTemp = document.getElementById("cityTemp");
+    futureTemp.innerHTML = "Temp: " + temp + "\u00B0F"; 
+    var futureWind = document.getElementById("cityWind");
+    var windSpeed = futureConditions["wind_speed"];
+    futureWind.innerHTML = "Wind: " + windSpeed + "MPH";
+    var futureHumidity = document.getElementById("cityHumidity");
+    var humidity = futureConditions["humidity"];
+    futureHumidity.innerHTML = "Humidity: " + humidity + "%";
+*/
+}
+
+function futureDay(futureDate) {//date display
+    var today = moment().add(futureDate, 'd');
+    var momentDisplay = moment(today).format("M/D/YYYY");
+    return momentDisplay;
+}
+
 
 weatherDisplay();
