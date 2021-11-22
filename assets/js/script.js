@@ -1,15 +1,3 @@
-function weatherApi() {
-    console.log("something");
-    var fetchData = async () => {
-    var apiWeather = await fetch(
-        "https://api.openweathermap.org/data/2.5/weather?q=Boston"
-        );
-        var data = await apiWeather.json();
-        console.log(data);
-}
-}
-
-
 async function callWeatherApi(apiChoice) {
 
     return new Promise(function (resolve, reject) {
