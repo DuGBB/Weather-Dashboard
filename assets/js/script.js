@@ -24,7 +24,8 @@ function weatherDisplay() {
     citySave.innerHTML = "Search";
     citySave.setAttribute("id", "citySearch");
     citySave.addEventListener("click", function() {
-        citySearch();
+        var searchCity = document.getElementById("city").value;
+        citySearch(searchCity);
     });
     weatherDisplay.appendChild(cityBox);
     var breakLine = document.createElement("br");
@@ -48,11 +49,11 @@ function history() {
     for (let [key, value] of Object.entries(callDictionary)) {
         let historyButton = document.createElement("button");
         historyButton.setAttribute("id", key);
+        historyButton.setAttribute("class", "historyBtn");
         var latLongCoords = callDictionary[key];
         historyButton.innerHTML = key;
         historyButton.onclick = function(){
-            currentWeather(key);
-            futureWeather(key);
+            citySearch(key);
         };
 
         historyEl.appendChild(historyButton);
@@ -78,20 +79,28 @@ function currentWeather(cityName) {
     currentEl.innerHTML = cityName + "  " + currentDate;
 
     let img = document.createElement("img");
+    img.setAttribute("class", "iconStyle");
     img.src = "http://openweathermap.org/img/w/" + currentConditions["weather"][0].icon + ".png";
     currentEl.appendChild(img);
 
     var currentTemp = document.getElementById("cityTemp");
-    currentTemp.innerHTML = "Temp: " + temp + "\u00B0F"; 
+    currentTemp.innerHTML = "Temp: " + temp.toFixed(2) + "\u00B0F"; 
     var currentWind = document.getElementById("cityWind");
     var windSpeed = currentConditions["wind_speed"];
     currentWind.innerHTML = "Wind: " + windSpeed + "MPH";
     var currentHumidity = document.getElementById("cityHumidity");
     var humidity = currentConditions["humidity"];
     currentHumidity.innerHTML = "Humidity: " + humidity + "%";
-    var currentUv = document.getElementById("cityUv");
+    var currentUv = document.getElementById("uvColor");
     var uvIndex = currentConditions["uvi"];
-    currentUv.innerHTML = "UV Index: " + uvIndex;
+    if (uvIndex <= 2) {
+        currentUv.style.backgroundColor = "lightgreen";
+    } else if (uvIndex >= 3 && uvIndex <= 5) {
+        currentUv.style.backgroundColor = "yellow";
+    } else {
+        currentUv.style.backgroundColor = "red";
+    }
+    currentUv.innerHTML = uvIndex;
 
 }
 
@@ -113,9 +122,8 @@ function localCheck(searchCity) {
     return callDictionary[searchCity];
 }
 
-async function citySearch() {
-    var searchCity = document.getElementById("city").value;
-    console.log(searchCity);
+async function citySearch(searchCity) {
+//    console.log(searchCity);
     var coords = localCheck(searchCity);
     if (coords) {
         //var skipOne = callWeatherApi("https://api.openweathermap.org/data/2.5/onecall?lat=42.3584&lon=-71.0598&appid=f5fcc6200f37ec0e220488ef0220dcf7");
