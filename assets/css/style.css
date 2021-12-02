@@ -12,20 +12,50 @@ h1 {
     padding-bottom: 15px;
 }
 
+
+#city {
+    width: 100%;
+}
+
 #citySearch {
     background-color: rgb(172, 187, 238);
     color: white;
     display: block;
     width: 100%;
+    height: 40px;
+    font-size: 20px;
 }
 
 .historyBtn {
     background-color: lightgray;
     display: block;
     width: 100%;
-   font-weight: bolder;
-   font-size: 15px;
+    height: 45px;
+    font-weight: bolder;
+    font-size: 20px;
+    border-radius: 2%;
+    border-style: none;
     text-align: center;
+}
+
+#tableDataEl {
+    top: 0;
+    padding: 10px;
+    margin-top: auto;
+    width: 25%;
+    
+}
+
+table {
+    table-layout: fixed;
+    width: 100%;
+
+}
+
+#tableRight {
+    width: 75%;
+    padding: 15px;
+
 }
 
 #currentCondition {
@@ -36,16 +66,43 @@ h1 {
 }
 
 #cityDate {
-    background-color: tomato;
     vertical-align: middle;
     margin-top: 0;
 }
 
 .iconStyle {
     margin-top: 0;
-    background-color: pink;
     vertical-align: middle;
 }
 #futureConditions {
     display: flex;
+    justify-content: space-between;
+    border-width: thin;
+    margin-top: auto;
+    font-weight: bold;
+}
+
+.dateStyle {
+    font-weight: bolder;
+    font-size: x-large;
+}
+
+#uvColor {
+    padding: 4px 10px;
+    color: white;
+    border-radius: 5px;
+    border-style: none;
+} 
+
+.divStyle {
+    color: white;
+}
+
+#futureWeather {
+    background-color: rgb(43, 76, 87);
+    border-style: solid;
+    padding-left: 7px;
+    padding-right: 50px;
+    margin-left: 0%;
+    font-size: 19px;
 }

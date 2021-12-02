@@ -50,14 +50,14 @@ function history() {
         let historyButton = document.createElement("button");
         historyButton.setAttribute("id", key);
         historyButton.setAttribute("class", "historyBtn");
-        var latLongCoords = callDictionary[key];
+        let latLongCoords = callDictionary[key];
         historyButton.innerHTML = key;
         historyButton.onclick = function(){
             citySearch(key);
         };
 
         historyEl.appendChild(historyButton);
-        var breakLine = document.createElement("br");
+        let breakLine = document.createElement("br");
         historyEl.appendChild(breakLine);
     }
     oldhistoryEl.parentElement.replaceChild(historyEl, oldhistoryEl);        
@@ -72,8 +72,7 @@ function currentWeather(cityName) {
     }   
     let cityWeather = callDictionary[cityName];
     var currentConditions = cityWeather["current"];
-    var tempCurrent = currentConditions["temp"];
-    temp = ((tempCurrent-273.15)*1.8)+32;
+    var temp = currentConditions.temp;
     var currentEl = document.getElementById("cityDate");
     var currentDate = currentDay();
     currentEl.innerHTML = cityName + "  " + currentDate;
@@ -84,17 +83,17 @@ function currentWeather(cityName) {
     currentEl.appendChild(img);
 
     var currentTemp = document.getElementById("cityTemp");
-    currentTemp.innerHTML = "Temp: " + temp.toFixed(2) + "\u00B0F"; 
+    currentTemp.innerHTML = "Temp: " + temp.toFixed(2) + " \u00B0F"; 
     var currentWind = document.getElementById("cityWind");
     var windSpeed = currentConditions["wind_speed"];
-    currentWind.innerHTML = "Wind: " + windSpeed + "MPH";
+    currentWind.innerHTML = "Wind: " + windSpeed + " MPH";
     var currentHumidity = document.getElementById("cityHumidity");
     var humidity = currentConditions["humidity"];
-    currentHumidity.innerHTML = "Humidity: " + humidity + "%";
+    currentHumidity.innerHTML = "Humidity: " + humidity + " %";
     var currentUv = document.getElementById("uvColor");
     var uvIndex = currentConditions["uvi"];
     if (uvIndex <= 2) {
-        currentUv.style.backgroundColor = "lightgreen";
+        currentUv.style.backgroundColor = "green";
     } else if (uvIndex >= 3 && uvIndex <= 5) {
         currentUv.style.backgroundColor = "yellow";
     } else {
@@ -152,14 +151,14 @@ function saveWeatherData(city, data){
 }
 
 async function getWeather(coordSearch) {
-    var weatherData = await callWeatherApi("https://api.openweathermap.org/data/2.5/onecall?lat=" + coordSearch["lat"] + "&lon=" + coordSearch["lon"] + "&exclude=minutely,hourly,alerts&appid=f5fcc6200f37ec0e220488ef0220dcf7");
+    var weatherData = await callWeatherApi("https://api.openweathermap.org/data/2.5/onecall?lat=" + coordSearch["lat"] + "&lon=" + coordSearch["lon"] + "&exclude=minutely,hourly,alerts&appid=f5fcc6200f37ec0e220488ef0220dcf7&units=imperial");
     console.log(weatherData);
     // return weather JSON to function asking for data
     return weatherData;
 }
 
 async function cityCoords(cityName) {
-    var cityLatLong = await callWeatherApi("https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=f5fcc6200f37ec0e220488ef0220dcf7");
+    var cityLatLong = await callWeatherApi("https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=f5fcc6200f37ec0e220488ef0220dcf7&units=imperial");
     var localDictionary = localStorage.getItem("cityLongLad");
     if (localDictionary === null) {
         var callDictionary = {};
@@ -186,30 +185,35 @@ function futureWeather(cityName) {
     var futureConditionsEl = document.createElement("div");
     futureConditionsEl.setAttribute("id", "futureConditions");
     for (let index = 0; index < 5; index++) {
+        let superThing = document.createElement("div");
+        superThing.setAttribute("id", "futureWeather");
         const element = futureConditions[index];
-        var futureEl = document.createElement("p");
-        var futureDate = futureDay(index + 1);
+        let futureEl = document.createElement("p");
+        futureEl.setAttribute("class", "divStyle dateStyle");
+        let futureDate = futureDay(index + 1);
         futureEl.innerHTML = futureDate;
         console.log(futureDate);
-        const dailyEl = document.createElement("div");
+        let dailyEl = document.createElement("div");
         dailyEl.appendChild(futureEl);
-        futureConditionsEl.appendChild(dailyEl);
+        superThing.appendChild(dailyEl);
         let img = document.createElement("img");
         img.src = "http://openweathermap.org/img/w/" + element["weather"][0].icon + ".png";
-        futureConditionsEl.appendChild(img);
-        let tempFuture = element["temp"].day;
-        temp = ((tempFuture-273.15)*1.8)+32;
+        superThing.appendChild(img);
         let futureTemp = document.createElement("p");
-        futureTemp.innerHTML = "Temp: " + temp + "\u00B0F"; 
-        futureConditionsEl.appendChild(futureTemp);
+        futureTemp.setAttribute("class", "divStyle");
+        futureTemp.innerHTML = "Temp: " + element.temp.day + " \u00B0F"; 
+        superThing.appendChild(futureTemp);
         let futureWind = document.createElement("p");
+        futureWind.setAttribute("class", "divStyle");
         let windSpeed = element.wind_speed;
-        futureWind.innerHTML = "Wind: " + windSpeed + "MPH";
-        futureConditionsEl.appendChild(futureWind);
+        futureWind.innerHTML = "Wind: " + windSpeed + " MPH";
+        superThing.appendChild(futureWind);
         let futureHumidity = document.createElement("p");
+        futureHumidity.setAttribute("class", "divStyle");
         let humidity = element.humidity;
-        futureHumidity.innerHTML = "Humidity: " + humidity + "%";
-        futureConditionsEl.appendChild(futureHumidity);
+        futureHumidity.innerHTML = "Humidity: " + humidity + " %";
+        superThing.appendChild(futureHumidity);
+        futureConditionsEl.appendChild(superThing);
     }
 
     oldConditionsEl.parentElement.replaceChild(futureConditionsEl, oldConditionsEl);
